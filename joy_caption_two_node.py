@@ -61,10 +61,12 @@ class JoyClipVisionModel:
 
         self.patcher = ModelPatcher(self.model, load_device=self.load_device, offload_device=self.offload_device)
 
-    def encode_image(self, pixel_values):
+     def encode_image(self, pixel_values):
         #print(f"{id(self)}之前 in JoyClipVisionModel: {next(self.model.parameters()).device}")  # 打印模型参数的设备
         load_models_gpu([self.patcher], force_full_load=True, force_patch_weights=True)
         #print(f"之后 in JoyClipVisionModel: {next(self.model.parameters()).device}")  # 打印模型参数的设备
+        # Convert image data to the model's dtype
+        pixel_values = pixel_values.to(dtype=self.type)
         vision_outputs = self.model(pixel_values=pixel_values, output_hidden_states=True)
         return vision_outputs
 
